@@ -14,7 +14,7 @@ gcc setup.c -o setup randombytes.o sss.o hazmat.o tweetnacl.o -I/opt/homebrew/op
 
 5 - run the code
 
-./setup   
+./gen_shards.sh
 
 6 - copy encrypted shares files and paste it on your personal device
 

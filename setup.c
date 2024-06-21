@@ -13,6 +13,7 @@
 #define KEY_SIZE 256  // For RSA-2048, 256 bytes is sufficient
 #define NUM_SHARES 6
 #define THRESHOLD 3
+#define ETH_PRIVATE_KEY_SIZE 32
 
 void handle_errors() {
     ERR_print_errors_fp(stderr);
@@ -151,6 +152,22 @@ int encrypt_and_save_share(unsigned char *share, int share_len, const char *pub_
     return 0;
 }
 
+// Converts a hex string to a byte array
+void hex_to_bytes(const char *hex, uint8_t *bytes, size_t length) {
+    for (size_t i = 0; i < length; i++) {
+        sscanf(&hex[i * 2], "%2hhx", &bytes[i]);
+    }
+}
+
+// Utility function to print data in hex
+void print_hex(const char *label, const uint8_t *data, size_t length) {
+    printf("%s", label);
+    for (size_t i = 0; i < length; i++) {
+        printf("%02X", data[i]);
+    }
+    printf("\n");
+}
+
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <secret>\n", argv[0]);
@@ -162,11 +179,8 @@ int main(int argc, char *argv[]) {
     size_t idx;
     int tmp;
 
-    // Read the message to be shared from the command line
-    strncpy((char *)data, argv[1], sizeof(data));
-
-    // Ensure the message is null-terminated
-    data[sizeof(data) - 1] = '\0';
+    // Copy the Ethereum private key (hex in bytes) into data
+    hex_to_bytes(argv[1], data, ETH_PRIVATE_KEY_SIZE);
 
     // Split the secret into 6 shares (with a recombination threshold of 3)
     sss_create_shares(shares, data, NUM_SHARES, THRESHOLD);
@@ -184,7 +198,9 @@ int main(int argc, char *argv[]) {
 	assert(tmp == 0);
 	assert(memcmp(restored, data, sss_MLEN) == 0);
 
-    printf("Restored secret as string: %s\n", restored);
+    // Print the restored secret as a hexadecimal string
+    printf("Restored Ethereum Private Key: ");
+    print_hex("", restored, ETH_PRIVATE_KEY_SIZE);
 
 
     // Define public key filenames and corresponding output files

@@ -5,6 +5,7 @@
 #include <assert.h>
 
 #define THRESHOLD 3 // Recombination threshold
+#define ETH_PRIVATE_KEY_SIZE 32
 
 // Converts a hex string to a byte array
 void hex_to_bytes(const char *hex, uint8_t *bytes, size_t length) {
@@ -15,6 +16,15 @@ void hex_to_bytes(const char *hex, uint8_t *bytes, size_t length) {
 
 // Prints byte array in hex format
 void print_hex(const uint8_t *data, size_t length) {
+    for (size_t i = 0; i < length; i++) {
+        printf("%02X", data[i]);
+    }
+    printf("\n");
+}
+
+// Utility function to print data in hex
+void print_hex_label(const char *label, const uint8_t *data, size_t length) {
+    printf("%s", label);
     for (size_t i = 0; i < length; i++) {
         printf("%02X", data[i]);
     }
@@ -60,10 +70,7 @@ int main(int argc, char *argv[]) {
 
     // Print the restored secret in hexadecimal format
     printf("Restored secret: ");
-    print_hex(restored, sss_MLEN);
-
-    // Print the restored secret as a string for verification
-    printf("Restored secret as string: %s\n", restored);
+    print_hex_label("", restored, ETH_PRIVATE_KEY_SIZE);
 
     return 0;
 }
