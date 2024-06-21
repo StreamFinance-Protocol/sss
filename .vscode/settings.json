@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "randombytes.h": "c",
+        "hazmat.h": "c",
+        "stdlib.h": "c"
+    }
+}
