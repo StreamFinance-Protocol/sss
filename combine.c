@@ -23,12 +23,23 @@ void print_hex(const uint8_t *data, size_t length) {
 }
 
 // Utility function to print data in hex
-void print_hex_label(const char *label, const uint8_t *data, size_t length) {
-    printf("%s", label);
-    for (size_t i = 0; i < length; i++) {
-        printf("%02X", data[i]);
+char* get_hex_key(const uint8_t *data, size_t length) {
+
+    // Allocate memory for the hex string (2 characters per byte + null terminator)
+    char *hex_str = (char *)malloc((length * 2 + 1) * sizeof(char));
+    if (!hex_str) {
+        return NULL; // Allocation failed
     }
-    printf("\n");
+
+    // Convert each byte to hex and store in the string
+    for (size_t i = 0; i < length; i++) {
+        sprintf(hex_str + (i * 2), "%02X", data[i]);
+    }
+
+    // Null-terminate the string
+    hex_str[length * 2] = '\0';
+
+    return hex_str;
 }
 
 // Prints the shares for debugging
@@ -39,10 +50,10 @@ void print_shares(const sss_Share *shares, size_t count) {
     }
 }
 
-int main(int argc, char *argv[]) {
+char* main(int argc, char *argv[]) {
     if (argc != THRESHOLD + 1) {
         fprintf(stderr, "Usage: %s <hex_share1> <hex_share2> <hex_share3>\n", argv[0]);
-        return 1;
+        return "";
     }
 
     // Allocate memory for shares
@@ -53,7 +64,7 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < THRESHOLD; i++) {
         if (strlen(argv[i + 1]) != sss_SHARE_LEN * 2) { // Use sss_SHARE_LEN for share length
             fprintf(stderr, "Error: Share %d is not the correct length. Expected %d hex characters.\n", i + 1, sss_SHARE_LEN * 2);
-            return 1;
+            return "";
         }
         hex_to_bytes(argv[i + 1], shares[i], sss_SHARE_LEN);
     }
@@ -65,12 +76,13 @@ int main(int argc, char *argv[]) {
     int tmp = sss_combine_shares(restored, (const sss_Share *)shares, THRESHOLD);
     if (tmp != 0) {
         fprintf(stderr, "Failed to combine shares.\n");
-        return 1;
+        return "";
     }
 
     // Print the restored secret in hexadecimal format
     printf("Restored secret: ");
-    print_hex_label("", restored, ETH_PRIVATE_KEY_SIZE);
+    char *hex_str = get_hex_key(restored, ETH_PRIVATE_KEY_SIZE);
+    printf("%s\n", hex_str);
 
-    return 0;
+    return hex_str;
 }
