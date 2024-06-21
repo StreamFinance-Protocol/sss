@@ -37,3 +37,9 @@ gcc combine.c -o combine sss.o randombytes.o hazmat.o tweetnacl.o -I/opt/homebre
 ./combine <shard1> <shard2> <shard3>
 
 
+
+### Extra
+
+To generate an ethereum key pair, uncomment the line that prints the mnemonic and run node eth_key.js
+
+
