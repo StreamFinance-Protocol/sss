@@ -85,9 +85,16 @@ void print_hex(const unsigned char *data, size_t len) {
     printf("\n");
 }
 
+// Convert hex string to byte array
+void hex_to_bytes(const char *hex, unsigned char *bytes, size_t length) {
+    for (size_t i = 0; i < length; i++) {
+        sscanf(&hex[i * 2], "%2hhx", &bytes[i]);
+    }
+}
+
 int decrypt_and_print(const char *encrypted_file, const char *private_key_file) {
-    // Read the encrypted file
-    FILE *file = fopen(encrypted_file, "rb");
+    // Read the encrypted hex data from the file
+    FILE *file = fopen(encrypted_file, "r");
     if (file == NULL) {
         fprintf(stderr, "Unable to open file %s\n", encrypted_file);
         return -1;
@@ -98,19 +105,33 @@ int decrypt_and_print(const char *encrypted_file, const char *private_key_file) 
     size_t file_size = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    // Allocate buffer and read file content
-    unsigned char *encrypted_data = malloc(file_size);
-    if (encrypted_data == NULL) {
+    // Allocate buffer for hex string and read file content
+    char *hex_data = malloc(file_size + 1); // +1 for null terminator
+    if (hex_data == NULL) {
         fprintf(stderr, "Memory allocation error\n");
         fclose(file);
         return -1;
     }
-    fread(encrypted_data, 1, file_size, file);
+    fread(hex_data, 1, file_size, file);
     fclose(file);
+    hex_data[file_size] = '\0'; // Null-terminate the hex string
+
+    // Calculate the length of the byte array
+    size_t byte_len = file_size / 2;
+    unsigned char *encrypted_data = malloc(byte_len);
+    if (encrypted_data == NULL) {
+        fprintf(stderr, "Memory allocation error\n");
+        free(hex_data);
+        return -1;
+    }
+
+    // Convert hex string to byte array
+    hex_to_bytes(hex_data, encrypted_data, byte_len);
+    free(hex_data);
 
     // Decrypt the data
     unsigned char *decrypted = NULL;
-    int decrypted_length = private_decrypt(encrypted_data, file_size, private_key_file, &decrypted);
+    int decrypted_length = private_decrypt(encrypted_data, (int)byte_len, private_key_file, &decrypted);
     free(encrypted_data);
     if (decrypted_length == -1) {
         fprintf(stderr, "Decryption failed.\n");

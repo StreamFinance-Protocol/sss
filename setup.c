@@ -130,6 +130,15 @@ int private_decrypt(unsigned char *enc_data, int data_len, const char *filename,
     return out_len;
 }
 
+void bytes_to_hex(const unsigned char *bytes, size_t len, char *hex) {
+    static const char hex_digits[] = "0123456789ABCDEF";
+    for (size_t i = 0; i < len; i++) {
+        hex[2 * i] = hex_digits[(bytes[i] >> 4) & 0xF];
+        hex[2 * i + 1] = hex_digits[bytes[i] & 0xF];
+    }
+    hex[2 * len] = '\0';
+}
+
 int encrypt_and_save_share(unsigned char *share, int share_len, const char *pub_key_filename, const char *output_filename) {
     unsigned char *encrypted = NULL;
     int encrypted_length = public_encrypt(share, share_len, pub_key_filename, &encrypted);
@@ -138,16 +147,28 @@ int encrypt_and_save_share(unsigned char *share, int share_len, const char *pub_
         return -1;
     }
 
-    FILE *file = fopen(output_filename, "wb");
-    if (file == NULL) {
-        fprintf(stderr, "Unable to open file %s for writing\n", output_filename);
+    // Convert the encrypted data to a hexadecimal string
+    char *hex_encrypted = malloc(2 * encrypted_length + 1);
+    if (hex_encrypted == NULL) {
+        fprintf(stderr, "Memory allocation error\n");
         free(encrypted);
         return -1;
     }
+    bytes_to_hex(encrypted, encrypted_length, hex_encrypted);
 
-    fwrite(encrypted, 1, encrypted_length, file);
+    FILE *file = fopen(output_filename, "w"); // Open in text mode
+    if (file == NULL) {
+        fprintf(stderr, "Unable to open file %s for writing\n", output_filename);
+        free(encrypted);
+        free(hex_encrypted);
+        return -1;
+    }
+
+    // Write the hex string to the file
+    fprintf(file, "%s", hex_encrypted);
     fclose(file);
     free(encrypted);
+    free(hex_encrypted);
 
     return 0;
 }
