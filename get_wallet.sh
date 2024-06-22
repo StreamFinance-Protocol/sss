@@ -16,7 +16,7 @@ echo "SHARD2: $SHARD2"
 echo "SHARD3: $SHARD3"
 
 # Combine the shards using the 'combine' binary
-HEX_KEY=$(./combine "$SHARD1" "$SHARD2" "$SHARD3" | grep "Restored secret:" | sed 's/Restored secret: //')
+HEX_KEY=$(../sss/combine "$SHARD1" "$SHARD2" "$SHARD3" | grep "Restored secret:" | sed 's/Restored secret: //')
 
 # Debug print for combined result
 echo "Combined HEX_KEY: $HEX_KEY"
@@ -34,4 +34,4 @@ if [ -z "$HEX_KEY" ]; then
 fi
 
 # Call the Node.js script to process the hexadecimal private key
-node ./generate_wallet.js "$HEX_KEY"
+node ./sss/generate_wallet.js "$HEX_KEY"
