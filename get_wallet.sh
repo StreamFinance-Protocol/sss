@@ -16,7 +16,7 @@ echo "SHARD2: $SHARD2"
 echo "SHARD3: $SHARD3"
 
 # Combine the shards using the 'combine' binary
-HEX_KEY=$(../sss/combine "$SHARD1" "$SHARD2" "$SHARD3" | grep "Restored secret:" | sed 's/Restored secret: //')
+HEX_KEY=$(./sss/combine "$SHARD1" "$SHARD2" "$SHARD3" | grep "Restored secret:" | sed 's/Restored secret: //')
 
 # Debug print for combined result
 echo "Combined HEX_KEY: $HEX_KEY"
