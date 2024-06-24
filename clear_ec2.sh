@@ -23,9 +23,9 @@ sudo iptables -P INPUT DROP
 sudo iptables -P FORWARD DROP
 sudo iptables -P OUTPUT ACCEPT # Allow all outbound traffic by default
 
-# Allow inbound HTTPS traffic (port 443)
+# Allow inbound HTTPS traffic (port 8443)
 echo "Allowing HTTPS traffic..."
-sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 8443 -j ACCEPT
 
 # Allow established and related connections for ongoing HTTPS sessions
 echo "Allowing established and related connections..."
