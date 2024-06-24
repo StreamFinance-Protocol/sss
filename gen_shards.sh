@@ -13,6 +13,8 @@ public_key=$(echo "$output" | sed -n '2p')
 echo "Ethereum Private Key: $private_key"
 echo "Ethereum Address: $public_key"
 
+export DYDX_ADDRESS=$public_key
+
 # Check if private_key is not empty
 if [ -z "$private_key" ]; then
     echo "Error: Private key not generated or found."
