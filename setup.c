@@ -220,8 +220,8 @@ int main(int argc, char *argv[]) {
 	assert(memcmp(restored, data, sss_MLEN) == 0);
 
     // Print the restored secret as a hexadecimal string
-    printf("Restored Ethereum Private Key: ");
-    print_hex("", restored, ETH_PRIVATE_KEY_SIZE);
+    // printf("Restored Ethereum Private Key: ");
+    // print_hex("", restored, ETH_PRIVATE_KEY_SIZE);
 
 
     // Define public key filenames and corresponding output files
