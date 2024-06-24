@@ -10,7 +10,7 @@ private_key=$(echo "$output" | sed -n '1p')
 public_key=$(echo "$output" | sed -n '2p')
 
 # Debug: Print the keys
-echo "Ethereum Private Key: $private_key"
+#echo "Ethereum Private Key: $private_key"
 echo "Ethereum Address: $public_key"
 
 export DYDX_ADDRESS=$public_key

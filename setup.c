@@ -207,13 +207,13 @@ int main(int argc, char *argv[]) {
     sss_create_shares(shares, data, NUM_SHARES, THRESHOLD);
 
     // Print the generated shares in hexadecimal format
-    for (idx = 0; idx < NUM_SHARES; idx++) {
-        printf("Share %zu: ", idx);
-        for (size_t j = 0; j < sss_SHARE_LEN; j++) {
-            printf("%02X", shares[idx][j]);  // Print each byte in hexadecimal
-        }
-        printf("\n");
-    }
+    // for (idx = 0; idx < NUM_SHARES; idx++) {
+    //     printf("Share %zu: ", idx);
+    //     for (size_t j = 0; j < sss_SHARE_LEN; j++) {
+    //         printf("%02X", shares[idx][j]);  // Print each byte in hexadecimal
+    //     }
+    //     printf("\n");
+    // }
 
     tmp = sss_combine_shares(restored, shares, 3);
 	assert(tmp == 0);
